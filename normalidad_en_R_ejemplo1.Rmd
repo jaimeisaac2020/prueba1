@@ -1,0 +1,60 @@
+---
+title: "Normalidad en R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+# Cargando paquetes
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+```
+```{r}
+# Cargando una base de datos de R
+head(ToothGrowth)
+```
+
+
+```{r}
+# Tomando una muestra aleatoria.
+set.seed(2021)
+ToothGrowth%>% sample_n_by(supp,dose,size = 1)
+```  
+
+# Verificar normalidad en R
+Pregunta: Queremos probar si la variable len (longitud del diente) es normalmente
+repartido.
+## Métodos visuales
+El gráfico de densidad y el gráfico Q-Q se pueden utilizar para comprobar la normalidad visualmente.   
+
+1. **Gráfico de densidad:** el gráfico de densidad proporciona un juicio visual sobre si
+la distribución tiene forma de campana.  
+
+2. **Gráfico de QQ:** gráfico de QQ (o gráfico de cuantiles-cuantiles) dibuja la correlación
+entre una muestra dada y la distribución normal. A 45 grados
+También se traza la línea de referencia. En una gráfica QQ, cada observación se representa como
+un solo punto. Si los datos son normales, los puntos deben formar una línea recta.  
+
+```{r}
+library("ggpubr")
+# Density plot
+ggdensity(ToothGrowth$len, fill = "lightgray")
+# QQ plot
+ggqqplot(ToothGrowth$len)
+
+```
+```{r}
+ToothGrowth %>% shapiro_test(len)
+```  
+**p-valor** mayor que 0.05, por lo tanto asumimos normalidad en la variable **len**.
+
+**Normalidad para agrupacion de dose(por cada categoria o respuesta de dose)**
+```{r}
+ToothGrowth %>%
+group_by(dose) %>%
+shapiro_test(len)
+```
+Todos los p-valores son mayores que 0.05, por lo tanto la variable **len** siguen una distribucion Normal para cada respuesta o categoria de **dose**
